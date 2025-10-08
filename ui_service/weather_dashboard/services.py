@@ -1,6 +1,7 @@
 import requests
 import os
-from django.conf import settings
+
+# Archivo que funciona como proxy con nuestro servicio del clima
 
 API_URL = os.environ.get('WEATHER_API_URL', 'http://127.0.0.1:8001')
 

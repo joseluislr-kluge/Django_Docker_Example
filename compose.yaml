@@ -1,3 +1,4 @@
+# Aquí establecemos la red en que se van a "desplegar" los servicios para poder comunicarse entre ellos
 networks:
   app_network:
     driver: bridge
@@ -9,7 +10,9 @@ services:
     networks:
       - app_network
     ports:
-      - "$WEATHER_SERVICE_HOST_PORT:8000"
+    # el puerto 8001 en el host se mapea al puerto 8000 del contenedor weather-service
+    # es decir, se puede acceder al servicio en http://localhost:8001
+      - "8001:8000"
 
   ui-service:
     build: ./ui_service
@@ -19,6 +22,9 @@ services:
     networks:
       - app_network
     environment:
+    # asignamos la URL del servicio del clima a la variable de entorno WEATHER_API_URL
+    # http://weather-service:8000 hace referencia al contenedor 'weather-service' a través del DNS interno de Docker
+    # esto funciona porque ambos servicios están conectados a la misma red (app_network)
       - WEATHER_API_URL=http://weather-service:8000
     ports:
-      - "$DASHBOARD_HOST_PORT:8000"
+      - "8000:8000"

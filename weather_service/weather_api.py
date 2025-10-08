@@ -1,19 +1,18 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import requests
 
 app = FastAPI(title="Weather API Demo")
 
-# In-memory storage for simplicity
+# Almacenamiento en memoria por simplicidad
 places = {}
 
-# Define Place as a Pydantic model
 class Place(BaseModel):
-    name: str
-    latitude: float
-    longitude: float
+    name: str = Field(..., min_length=1, max_length=100)
+    latitude: float = Field(..., ge=-90, le=90)
+    longitude: float = Field(..., ge=-180, le=180)
 
-# Helper function to call Open-Meteo
+# Función que llama a Open-Meteo (API que nos da los datos del clima)
 def get_current_weather(latitude: float, longitude: float):
     response = requests.get(
         "https://api.open-meteo.com/v1/forecast",
@@ -28,12 +27,12 @@ def get_current_weather(latitude: float, longitude: float):
         raise HTTPException(status_code=502, detail="Error fetching weather data")
     return response.json()
 
-# List available places
+# Regresa la lista de lugares disponibles
 @app.get("/places")
 def list_places():
     return {"places": list(places.values())}
 
-# Add a new place
+# Agrega un lugar nuevo
 @app.post("/places")
 def add_place(place: Place):
     if place.name in places:
@@ -42,14 +41,14 @@ def add_place(place: Place):
     places[place.name] = place.model_dump()
     return {"message": "Place added", "place": place}
 
-# Get place by name
+# Accede a los datos (latitud y longitud) de un lugar con su nombre
 @app.get("/places/{name}")
 def get_place(name: str):
     if name not in places:
         raise HTTPException(status_code=404, detail="Place not found")
     return places[name]
 
-# Update existing place
+# Actualiza un lugar
 @app.put("/places/{name}")
 def update_place(name: str, updated: Place):
     if name not in places:
@@ -71,7 +70,7 @@ def update_place(name: str, updated: Place):
     places[name] = updated_data
     return {"message": "Place updated successfully.", "place": updated}
 
-# Delete a place
+# Elimina un lugar
 @app.delete("/places/{name}")
 def delete_place(name: str):
     if name not in places:
@@ -80,7 +79,7 @@ def delete_place(name: str):
     del places[name]
     return {"message": "Place deleted"}
 
-# Get current weather for a registered place
+# Utiliza Open-Meteo para obtener la información del clima actual de alguno de los lugares guardados
 @app.get("/weather/{place_name}")
 def get_weather_for_place(place_name: str):
     if place_name not in places:
@@ -88,7 +87,7 @@ def get_weather_for_place(place_name: str):
 
     place = places[place_name]
     weather = get_current_weather(place["latitude"], place["longitude"])
-    del weather["current"]["interval"]
+    weather["current"].pop("interval", None)
     return {
         "place": place,
         "weather": weather["current"]

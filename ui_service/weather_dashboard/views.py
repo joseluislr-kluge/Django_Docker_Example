@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
-from django.urls import reverse
 from django.contrib import messages
 from . import services
 from .forms import PlaceForm
+
+# Archivo clásico de vistas. La diferencia con django tradicional es que utilizamos el proxy a nuestras apis (services.py)
+# para acceder a los datos que le pasamos a las plantillas en lugar de utilizar modelos y bases de datos
 
 def dashboard_view(request):
     places = services.get_all_places()
