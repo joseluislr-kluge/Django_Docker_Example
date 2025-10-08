@@ -1,0 +1,15 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+    <h1>Delete Place</h1>
+    <div class="card">
+        <div class="card-body">
+            <p>Are you sure you want to delete <strong>{{ place.name }}</strong>?</p>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                <a href="{% url 'place-list' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+{% endblock %}

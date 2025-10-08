@@ -1,0 +1,40 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Manage Places</h1>
+        <a href="{% url 'place-create' %}" class="btn btn-primary">Add New Place</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for place in places %}
+                        <tr>
+                            <td>{{ place.name }}</td>
+                            <td>{{ place.latitude }}</td>
+                            <td>{{ place.longitude }}</td>
+                            <td>
+                                <a href="{% url 'place-update' place.name %}" class="btn btn-sm btn-secondary">Edit</a>
+                                <a href="{% url 'place-delete' place.name %}" class="btn btn-sm btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">No places found.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

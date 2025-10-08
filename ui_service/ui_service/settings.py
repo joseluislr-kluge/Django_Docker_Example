@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-n)=ugp^m_te4k#_a7^1%(7*+cj!h)8p2eq-cr0x5scq8g+@1)3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'weather_dashboard',
 ]
 
 MIDDLEWARE = [
